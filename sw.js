@@ -1,5 +1,12 @@
 const CACHE_NAME = "pizzaria-v1";
-const ASSETS = ["./", "./index.html", "./manifest.json"];
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./style.css",
+  "./produtos.js",
+  "./script.js",
+  "./manifest.json",
+];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
