@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Lista Pizzaria Pro</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <style>
+      :root {
+        --primary: #d35400;
+        --secondary: #27ae60;
+        --danger: #e74c3c;
+        --bg: #f9f3e1;
+        --white: #ffffff;
+      }
+
+      body {
+        font-family: "Segoe UI", Roboto, sans-serif;
+        background-color: var(--bg);
+        margin: 0;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 550px;
+        background: var(--white);
+        padding: 15px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 120px;
+        box-sizing: border-box;
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        font-size: 1.6em;
+        margin-bottom: 15px;
+      }
+
+      .section {
+        margin-top: 15px;
+        border: 2px solid var(--primary);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .section h2 {
+        background: var(--primary);
+        color: white;
+        margin: 0;
+        padding: 10px;
+        font-size: 1em;
+        text-transform: uppercase;
+        text-align: center;
+      }
+
+      /* LINHA DO ITEM */
+      .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+      }
+      .item label {
+        font-size: 1em;
+        color: #333;
+        flex: 1;
+        font-weight: 500;
+      }
+
+      /* CONTROLES DE QUANTIDADE */
+      .qty-controls {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .btn-qty {
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.5em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-minus {
+        background: #eee;
+        color: #555;
+      }
+      .btn-plus {
+        background: var(--primary);
+        color: white;
+      }
+      .btn-qty:active {
+        transform: scale(0.9);
+      }
+
+      .item input {
+        width: 45px;
+        height: 38px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 1.1em;
+        font-weight: bold;
+        outline: none;
+        background: #fff;
+      }
+
+      /* RESUMO E BOTÕES FINAIS */
+      .output {
+        margin-top: 20px;
+        padding: 12px;
+        background: #fffdf9;
+        border: 2px dashed var(--primary);
+        border-radius: 8px;
+      }
+      #lista-texto {
+        white-space: pre-line;
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 1em;
+      }
+
+      .btn-group {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.95);
+        display: flex;
+        gap: 10px;
+        box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.08);
+        z-index: 100;
+      }
+
+      @media (min-width: 600px) {
+        .btn-group {
+          position: relative;
+          padding: 20px 0;
+          box-shadow: none;
+          background: none;
+        }
+        .container {
+          margin-bottom: 20px;
+        }
+      }
+
+      .btn-main {
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 15px;
+        text-transform: uppercase;
+      }
+      .copy-btn {
+        flex: 2;
+        background: var(--secondary);
+        color: white;
+        font-size: 1em;
+      }
+      .clear-btn {
+        flex: 1;
+        background: var(--danger);
+        color: white;
+        font-size: 0.8em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🍕 Lista da Pizzaria</h1>
+      <div id="categorias-container"></div>
+
+      <div class="output">
+        <div id="lista-texto">Nenhum item selecionado.</div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn-main clear-btn" onclick="clearAll()">Zerar</button>
+        <button class="btn-main copy-btn" onclick="copyToClipboard()">
+          Copiar Lista
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const categorias = {
+        Mesa: [
+          "Cebola",
+          "Tomate",
+          "Pimentão",
+          "Frango",
+          "Carne",
+          "Filé",
+          "Calabresa",
+          "Presunto",
+          "Bacon",
+          "Milho",
+          "Ervilha",
+          "Azeitona",
+          "Ovos",
+          "Catupiry",
+          "Cheddar",
+          "Queijo Ralado",
+          "Batata Palha",
+          "Creme de Leite",
+          "Leite Condensado",
+          "Goiabada",
+          "Chocolate",
+          "Palmito",
+          "Atum",
+          "Orégano",
+          "Pimenta Gota",
+          "Molho Vermelho",
+        ],
+        Cozinha: [
+          "Cheiro Verde",
+          "Óleo",
+          "Leite Caixa",
+          "Ketchup",
+          "Maionese",
+          "Alho",
+          "Sazón",
+          "Gás",
+          "Saco Sache",
+          "Saco Molho",
+          "Caldo Carne",
+          "Caldo Frango",
+          "Coloral",
+          "Pim. Reino",
+          "Pim. Cheiro",
+          "Isqueiro",
+        ],
+        Limpeza: [
+          "Detergente",
+          "Desinfetante",
+          "Sabão Pó",
+          "Sabão Barra",
+          "Veja",
+          "Esponja",
+          "Bombril",
+          "Palha de Aço",
+          "Água Sanitária",
+        ],
+        Balcão: [
+          "Copos",
+          "Guardanapos",
+          "Talher Plástico",
+          "Fita Adesiva",
+          "Coca 1L",
+          "Coca 1.5L",
+          "Coca 2L",
+          "Fanta 1L",
+          "Fanta 1.5L",
+          "Fanta 2L",
+          "Baré 1L",
+          "Baré 1.5L",
+          "Baré 2L",
+          "Guaraná 1L",
+          "Guaraná 1.5L",
+          "Guaraná 2L",
+        ],
+        "Massas e Caixas": [
+          "Massa M",
+          "Massa G",
+          "Massa Fam",
+          "Massa Gig",
+          "Caixa M",
+          "Caixa G",
+          "Caixa Fam",
+          "Caixa Gig",
+        ],
+      };
+
+      function init() {
+        const container = document.getElementById("categorias-container");
+        for (let titulo in categorias) {
+          const section = document.createElement("div");
+          section.className = "section";
+          section.innerHTML = `<h2>${titulo}</h2>`;
+          const list = document.createElement("div");
+
+          categorias[titulo].forEach((nome) => {
+            const id = "prod-" + nome.replace(/\s+/g, "-").toLowerCase();
+            const savedVal = localStorage.getItem(id) || 0;
+
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "item";
+            itemDiv.innerHTML = `
+                    <label>${nome}</label>
+                    <div class="qty-controls">
+                        <button class="btn-qty btn-minus" onclick="changeQty('${id}', -1)">-</button>
+                        <input type="number" id="${id}" value="${savedVal}" readonly>
+                        <button class="btn-qty btn-plus" onclick="changeQty('${id}', 1)">+</button>
+                    </div>
+                `;
+            list.appendChild(itemDiv);
+          });
+          section.appendChild(list);
+          container.appendChild(section);
+        }
+        updatePreview();
+      }
+
+      function changeQty(id, delta) {
+        const input = document.getElementById(id);
+        let newVal = parseInt(input.value || 0) + delta;
+        if (newVal < 0) newVal = 0;
+        input.value = newVal;
+        localStorage.setItem(id, newVal);
+        updatePreview();
+      }
+
+      function updatePreview() {
+        let textoFinal = "";
+        const inputs = document.querySelectorAll('input[type="number"]');
+        inputs.forEach((input) => {
+          if (input.value > 0) {
+            const label =
+              input.parentElement.parentElement.querySelector(
+                "label",
+              ).innerText;
+            textoFinal += `• ${label}: ${input.value}\n`;
+          }
+        });
+        document.getElementById("lista-texto").innerText =
+          textoFinal || "Nenhum item selecionado.";
+      }
+
+      function copyToClipboard() {
+        const conteudo = document.getElementById("lista-texto").innerText;
+        if (conteudo === "Nenhum item selecionado.")
+          return alert("Lista vazia!");
+
+        const cabecalho =
+          "🛒 *LISTA DE COMPRAS*\n" + new Date().toLocaleDateString() + "\n\n";
+        const textoCompleto = cabecalho + conteudo;
+
+        // Tenta o método moderno
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(textoCompleto)
+            .then(() => {
+              alert("✅ Copiado!");
+            })
+            .catch(() => {
+              // Se falhar (como no arquivo local), tenta o método antigo
+              fallbackCopy(textoCompleto);
+            });
+        } else {
+          fallbackCopy(textoCompleto);
+        }
+      }
+
+      function clearAll() {
+        if (confirm("Zerar lista?")) {
+          localStorage.clear();
+          location.reload();
+        }
+      }
+
+      init();
+    </script>
+  </body>
+</html>
