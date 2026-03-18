@@ -17,6 +17,7 @@
         --danger: #e74c3c;
         --bg: #f9f3e1;
         --white: #ffffff;
+        --selected-bg: #fff3e0; /* Tom de laranja suave para o fundo */
       }
       body {
         font-family: "Segoe UI", Roboto, sans-serif;
@@ -64,7 +65,18 @@
         align-items: center;
         padding: 10px;
         border-bottom: 1px solid #eee;
+        transition: background-color 0.3s ease; /* Transição suave da cor */
       }
+      /* ESTILO PARA ITEM SELECIONADO */
+      .item.selected {
+        background-color: var(--selected-bg);
+        border-left: 5px solid var(--primary);
+      }
+      .item.selected label {
+        font-weight: bold;
+        color: var(--primary);
+      }
+
       .item label {
         font-size: 1em;
         color: #333;
@@ -96,6 +108,7 @@
         background: var(--primary);
         color: white;
       }
+
       .item input {
         width: 45px;
         height: 38px;
@@ -208,6 +221,11 @@
           "Orégano",
           "Gás",
           "Alho",
+          "Tempero Arisco",
+          "Vinagre",
+          "Sal",
+          "Café",
+          "Açúcar",
           "Sazón",
           "Saco Molho Verde",
           "Caldo Carne",
@@ -227,6 +245,7 @@
           "Bombril",
           "Palha de Aço",
           "Água Sanitária",
+          "Limpa Alumínio",
         ],
         Mesa: [
           "Cebola",
@@ -263,6 +282,7 @@
           "Cereja",
           "Ameixa Seca",
           "Barbecue",
+          "Azeite Camarão",
           "Pimenta Gota",
         ],
         "Massas e Caixas": [
@@ -280,15 +300,16 @@
           "Maionese Sachê",
           "Saco Sache",
           "Saco Plastico",
-          "Copos",
-          "Pratos",
+          "Copo Descartável",
+          "Prato Descartável",
           "Guardanapos",
-          "Talher Plástico",
+          "Talher Descartável",
           "Fita Adesiva",
           "Bobinha Comanda",
           "Coca 1L",
           "Coca 1.5L",
           "Coca 2L",
+          "Coca 2.5L",
           "Fanta 1L",
           "Fanta 1.5L",
           "Fanta 2L",
@@ -313,6 +334,9 @@
             const savedVal = localStorage.getItem(id) || 0;
             const itemDiv = document.createElement("div");
             itemDiv.className = "item";
+            // Adiciona classe de seleção se o valor salvo for > 0
+            if (savedVal > 0) itemDiv.classList.add("selected");
+
             itemDiv.innerHTML = `
                         <label>${nome}</label>
                         <div class="qty-controls">
@@ -330,10 +354,20 @@
 
       function changeQty(id, delta) {
         const input = document.getElementById(id);
+        const itemDiv = input.closest(".item");
         let newVal = parseInt(input.value || 0) + delta;
         if (newVal < 0) newVal = 0;
+
         input.value = newVal;
         localStorage.setItem(id, newVal);
+
+        // Lógica de destaque visual
+        if (newVal > 0) {
+          itemDiv.classList.add("selected");
+        } else {
+          itemDiv.classList.remove("selected");
+        }
+
         updatePreview();
       }
 
@@ -387,7 +421,6 @@
       function copyToClipboard() {
         const conteudo = gerarTextoLista();
         if (!conteudo) return alert("Lista vazia!");
-
         const textoCompleto = "🛒 *LISTA DE COMPRAS*\n\n" + conteudo;
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
