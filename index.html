@@ -10,6 +10,7 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#d35400" />
+    <link rel="manifest" href="manifest.json" />
     <style>
       :root {
         --primary: #d35400;
@@ -201,6 +202,12 @@
     </div>
 
     <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("./sw.js")
+          .then(() => console.log("Sistema Offline Pronto!"))
+          .catch((err) => console.log("Erro no Offline:", err));
+      }
       const categorias = {
         Cozinha: [
           "Frango",

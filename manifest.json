@@ -1,0 +1,16 @@
+{
+    "name": "Lista Pizzaria Pro",
+    "short_name": "Lista Pizza",
+    "description": "Lista de compras inteligente para pizzaria",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#f9f3e1",
+    "theme_color": "#d35400",
+    "icons": [
+        {
+            "src": "https://cdn-icons-png.flaticon.com/512/3595/3595455.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
