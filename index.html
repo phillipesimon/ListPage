@@ -84,7 +84,6 @@
         font-size: 1.5em;
         font-weight: bold;
         cursor: pointer;
-        transition: background 0.2s;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -96,9 +95,6 @@
       .btn-plus {
         background: var(--primary);
         color: white;
-      }
-      .btn-qty:active {
-        transform: scale(0.9);
       }
       .item input {
         width: 45px;
@@ -117,6 +113,12 @@
         background: #fffdf9;
         border: 2px dashed var(--primary);
         border-radius: 8px;
+      }
+      .output h3 {
+        margin: 0 0 10px 0;
+        font-size: 1.1em;
+        color: var(--primary);
+        text-align: center;
       }
       #lista-texto {
         white-space: pre-line;
@@ -174,6 +176,7 @@
       <h1>🍕 Lista da Pizzaria</h1>
       <div id="categorias-container"></div>
       <div class="output">
+        <h3>👀 Conferência da Lista:</h3>
         <div id="lista-texto">Nenhum item selecionado.</div>
       </div>
       <div class="btn-group">
@@ -278,6 +281,7 @@
           "Saco Sache",
           "Saco Plastico",
           "Copos",
+          "Pratos",
           "Guardanapos",
           "Talher Plástico",
           "Fita Adesiva",
@@ -333,23 +337,7 @@
         updatePreview();
       }
 
-      function updatePreview() {
-        let textoPreview = "";
-        const inputs = document.querySelectorAll('input[type="number"]');
-        inputs.forEach((input) => {
-          if (input.value > 0) {
-            const label =
-              input.parentElement.parentElement.querySelector(
-                "label",
-              ).innerText;
-            textoPreview += `• ${label}: ${input.value}\n`;
-          }
-        });
-        document.getElementById("lista-texto").innerText =
-          textoPreview || "Nenhum item selecionado.";
-      }
-
-      function copyToClipboard() {
+      function gerarTextoLista() {
         let itensCozinha = "";
         let itensBalcao = "";
         let itensMassas = "";
@@ -366,23 +354,41 @@
               .querySelector("h2").innerText;
             const linha = `• ${label}: ${input.value}\n`;
 
-            if (["COZINHA", "MESA", "LIMPEZA"].includes(categoriaPai)) {
+            if (
+              ["COZINHA", "MESA", "LIMPEZA"].includes(
+                categoriaPai.toUpperCase(),
+              )
+            ) {
               itensCozinha += linha;
-            } else if (categoriaPai === "BALCÃO") {
+            } else if (categoriaPai.toUpperCase() === "BALCÃO") {
               itensBalcao += linha;
-            } else if (categoriaPai === "MASSAS E CAIXAS") {
+            } else if (categoriaPai.toUpperCase() === "MASSAS E CAIXAS") {
               itensMassas += linha;
             }
           }
         });
 
-        if (!itensCozinha && !itensBalcao && !itensMassas)
-          return alert("Lista vazia!");
+        if (!itensCozinha && !itensBalcao && !itensMassas) return "";
 
-        let textoCompleto = "🛒 *LISTA DE COMPRAS*\n\n";
-        if (itensCozinha) textoCompleto += "*COZINHA*\n" + itensCozinha + "\n";
-        if (itensBalcao) textoCompleto += "*BALCÃO*\n" + itensBalcao + "\n";
-        if (itensMassas) textoCompleto += "*MASSAS E CAIXAS*\n" + itensMassas;
+        let texto = "";
+        if (itensCozinha) texto += "*COZINHA*\n" + itensCozinha + "\n";
+        if (itensBalcao) texto += "*BALCÃO*\n" + itensBalcao + "\n";
+        if (itensMassas) texto += "*MASSAS E CAIXAS*\n" + itensMassas;
+
+        return texto.trim();
+      }
+
+      function updatePreview() {
+        const texto = gerarTextoLista();
+        document.getElementById("lista-texto").innerText =
+          texto || "Nenhum item selecionado.";
+      }
+
+      function copyToClipboard() {
+        const conteudo = gerarTextoLista();
+        if (!conteudo) return alert("Lista vazia!");
+
+        const textoCompleto = "🛒 *LISTA DE COMPRAS*\n\n" + conteudo;
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard
