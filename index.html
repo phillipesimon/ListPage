@@ -7,47 +7,46 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Lista Pizzaria Pro</title>
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#d35400" />
-
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="manifest.json" />
   </head>
   <body>
     <div class="container">
-      <div
-        id="toast"
-        style="
-          visibility: hidden;
-          min-width: 250px;
-          background-color: #333;
-          color: #fff;
-          text-align: center;
-          border-radius: 8px;
-          padding: 16px;
-          position: fixed;
-          z-index: 1000;
-          bottom: 100px;
-          font-size: 17px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        "
-      ></div>
       <h1>🍕 Lista da Pizzaria</h1>
       <div id="categorias-container"></div>
+
       <div class="output">
         <h3>👀 Conferência da Lista:</h3>
         <div id="lista-texto">Nenhum item selecionado.</div>
       </div>
+
       <div class="btn-group">
-        <button class="btn-main clear-btn" onclick="clearAll()">Zerar</button>
+        <button class="btn-main clear-btn" onclick="openModal()">Zerar</button>
         <button class="btn-main send-btn" onclick="shareList()">
           Enviar Lista
         </button>
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <div id="toast"></div>
+
+    <div id="confirm-modal" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Zerar Lista?</h3>
+        <p>Isso apagará todas as quantidades selecionadas.</p>
+        <div class="modal-buttons">
+          <button onclick="closeModal()" class="btn-modal-cancel">
+            Cancelar
+          </button>
+          <button onclick="confirmClear()" class="btn-modal-confirm">
+            Sim, Zerar
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="produtos.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
