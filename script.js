@@ -77,7 +77,7 @@ function updatePreview() {
 
 async function shareList() {
   const conteudo = gerarTextoLista();
-  if (!conteudo) return alert("Lista vazia!");
+  if (!conteudo) return showToast("⚠️ Adicione itens primeiro!");
   const textoCompleto = "🛒 *LISTA DE COMPRAS*\n\n" + conteudo;
 
   if (navigator.share) {
@@ -93,7 +93,7 @@ async function shareList() {
     textArea.select();
     document.execCommand("copy");
     document.body.removeChild(textArea);
-    alert("✅ Navegador antigo: Lista Copiada!");
+    showToast("✅ Lista Copiada!");
   }
 }
 
@@ -102,6 +102,15 @@ function clearAll() {
     localStorage.clear();
     location.reload();
   }
+}
+
+function showToast(message) {
+  const x = document.getElementById("toast");
+  x.innerText = message;
+  x.style.visibility = "visible";
+  setTimeout(function () {
+    x.style.visibility = "hidden";
+  }, 3000);
 }
 
 // Inicializa tudo quando a página carregar
