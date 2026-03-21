@@ -240,7 +240,6 @@ function confirmClear() {
 async function shareList() {
   const content = buildListText();
 
-  // Se a lista estiver vazia, avisa e para a execução
   if (!content || content === "") {
     showToast("⚠️ A lista está vazia!");
     return;
